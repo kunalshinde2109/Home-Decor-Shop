@@ -1,0 +1,366 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | Home Decor</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/style.css' %}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #F7F4EE;
+            color: #263238;
+        }
+
+        .signup-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 16px;
+            background:
+                radial-gradient(
+                    circle at top left,
+                    #E9DED2 0%,
+                    #F7F4EE 42%,
+                    #F7F4EE 100%
+                );
+        }
+
+        .signup-card {
+            width: 100%;
+            max-width: 450px;
+            padding: 42px;
+            background: #FFFFFF;
+            border: 1px solid #D8CEC3;
+            border-radius: 24px;
+            box-shadow:
+                0 20px 60px rgba(38, 50, 56, 0.12);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand a {
+            color: #263238;
+            text-decoration: none;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .brand span {
+            display: block;
+            margin-top: 8px;
+            color: #9A7661;
+            font-size: 11px;
+            letter-spacing: 2px;
+        }
+
+        .signup-title {
+            text-align: center;
+            font-size: 29px;
+            margin: 0 0 8px;
+        }
+
+        .signup-subtitle {
+            text-align: center;
+            color: #6B6863;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .message {
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            border-radius: 10px;
+            background: #E9DED2;
+            color: #6F5140;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 17px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #D8CEC3;
+            border-radius: 10px;
+            background: #FFFFFF;
+            color: #263238;
+            font-size: 15px;
+            outline: none;
+            transition: 0.25s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #9A7661;
+            box-shadow: 0 0 0 3px rgba(154, 118, 97, 0.12);
+        }
+
+        .signup-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 10px;
+            background: #8B6B55;
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s ease;
+        }
+
+        .signup-button:hover {
+            background: #6F5140;
+            transform: translateY(-2px);
+        }
+
+        .login-text {
+            margin-top: 24px;
+            text-align: center;
+            color: #6B6863;
+            font-size: 14px;
+        }
+
+        .login-text a {
+            color: #8B6B55;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-text a:hover {
+            color: #6F5140;
+        }
+
+        .home-link {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .home-link a {
+            color: #6B6863;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .home-link a:hover {
+            color: #8B6B55;
+        }
+
+        @media (max-width: 500px) {
+
+            .signup-page {
+                padding: 20px 14px;
+            }
+
+            .signup-card {
+                padding: 30px 20px;
+                border-radius: 18px;
+            }
+
+            .brand a {
+                font-size: 26px;
+            }
+
+            .signup-title {
+                font-size: 25px;
+            }
+
+            .form-group input {
+                padding: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <main class="signup-page">
+
+        <div class="signup-card">
+
+            <div class="brand">
+
+                <a href="{% url 'home' %}">
+                    Home Decor
+                </a>
+
+                <span>
+                    BEAUTIFUL SPACES · BETTER LIVING
+                </span>
+
+            </div>
+
+
+            <h1 class="signup-title">
+                Create Account
+            </h1>
+
+            <p class="signup-subtitle">
+                Create your account and start shopping.
+            </p>
+
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="message">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <form method="POST"
+                  class="signup-form">
+
+                {% csrf_token %}
+
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="Enter email address"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Create password"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="Confirm password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="signup-button"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <div class="login-text">
+
+                Already have an account?
+
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
+
+            </div>
+
+
+            <div class="home-link">
+
+                <a href="{% url 'home' %}">
+                    ← Back to Home
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

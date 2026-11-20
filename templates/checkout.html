@@ -1,0 +1,763 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Home Decor</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .checkout-page {
+            min-height: 100vh;
+            padding: 120px 7% 60px;
+            background: #F7F4EE;
+        }
+
+        .checkout-title {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .checkout-title h1 {
+            font-size: 42px;
+            color: #263238;
+            margin-bottom: 10px;
+        }
+
+        .checkout-title p {
+            color: #6B6863;
+        }
+
+        .checkout-layout {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+        }
+
+        .checkout-card {
+            background: #FFFFFF;
+            border: 1px solid #D8CEC3;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(38, 50, 56, 0.06);
+        }
+
+        .checkout-card h2 {
+            color: #263238;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #263238;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #D8CEC3;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            background: #FFFFFF;
+            color: #263238;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #9A7661;
+            box-shadow: 0 0 0 3px rgba(154, 118, 97, 0.10);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #D8CEC3;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+            color: #263238;
+        }
+
+        .order-item-qty {
+            color: #6B6863;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .order-item-price {
+            font-weight: 600;
+            color: #8B6B55;
+            white-space: nowrap;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            color: #6B6863;
+        }
+
+        .summary-total {
+            border-top: 1px solid #D8CEC3;
+            margin-top: 10px;
+            padding-top: 18px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #263238;
+        }
+
+        .payment-section {
+            margin-top: 30px;
+            padding: 22px;
+            background: #F7F4EE;
+            border: 1px solid #D8CEC3;
+            border-radius: 14px;
+        }
+
+        .payment-section h3 {
+            color: #263238;
+            margin-bottom: 18px;
+        }
+
+        .payment-option {
+            background: #FFFFFF;
+            border: 1px solid #D8CEC3;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .payment-option:hover {
+            border-color: #9A7661;
+        }
+
+        .payment-option input {
+            accent-color: #8B6B55;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .payment-option label {
+            color: #263238;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .payment-details {
+            margin-top: 20px;
+        }
+
+        .qr-box {
+            text-align: center;
+            padding: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            border: 1px solid #D8CEC3;
+            margin-bottom: 20px;
+        }
+
+        #upi-qr {
+            width: 260px;
+            max-width: 100%;
+            min-height: 260px;
+            margin: 15px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #upi-qr img,
+        #upi-qr canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .upi-amount {
+            font-size: 26px;
+            font-weight: 700;
+            color: #8B6B55;
+            margin: 12px 0;
+        }
+
+        .upi-name {
+            color: #263238;
+            font-weight: 600;
+        }
+
+        .upi-note {
+            font-size: 14px;
+            color: #6B6863;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .cod-box {
+            text-align: center;
+            padding: 25px 20px;
+            background: #FFFFFF;
+            border: 1px solid #D8CEC3;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .cod-box p {
+            color: #6B6863;
+            line-height: 1.7;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #8B6B55;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .place-order-btn:hover {
+            background: #6F5140;
+            transform: translateY(-2px);
+        }
+
+        .secure-note {
+            text-align: center;
+            margin-top: 15px;
+            color: #6B6863;
+            font-size: 13px;
+        }
+
+        .empty-checkout {
+            max-width: 600px;
+            margin: 100px auto;
+            text-align: center;
+            background: #FFFFFF;
+            padding: 50px;
+            border-radius: 18px;
+        }
+
+        .empty-checkout a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 22px;
+            background: #8B6B55;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-page {
+                padding: 100px 20px 40px;
+            }
+
+            .checkout-title h1 {
+                font-size: 32px;
+            }
+
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .checkout-card {
+                padding: 22px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .payment-section {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<section class="checkout-page">
+
+    <div class="checkout-title">
+        <h1>Checkout</h1>
+        <p>Complete your details to place your order</p>
+    </div>
+
+    {% if cart_items %}
+
+    <div class="checkout-layout">
+
+        <!-- CUSTOMER DETAILS -->
+
+        <div class="checkout-card">
+
+            <h2>Delivery Details</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="customer_name">Full Name</label>
+                    <input
+                        type="text"
+                        id="customer_name"
+                        name="customer_name"
+                        placeholder="Enter your full name"
+                        required
+                    >
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="10 digit mobile number"
+                            maxlength="10"
+                            pattern="[6-9][0-9]{9}"
+                            inputmode="numeric"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Full Address</label>
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="4"
+                        placeholder="House no, street, area..."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            placeholder="Enter city"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input
+                            type="text"
+                            id="state"
+                            name="state"
+                            placeholder="Enter state"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="pincode">Pincode</label>
+                    <input
+                        type="text"
+                        id="pincode"
+                        name="pincode"
+                        placeholder="6 digit pincode"
+                        maxlength="6"
+                        pattern="[1-9][0-9]{5}"
+                        inputmode="numeric"
+                        required
+                    >
+                </div>
+
+
+                <!-- PAYMENT SECTION -->
+
+                <div class="payment-section">
+
+                    <h3>Payment Method</h3>
+
+                    <!-- UPI -->
+
+                    <div class="payment-option">
+
+                        <input
+                            type="radio"
+                            id="online_payment"
+                            name="payment_method"
+                            value="UPI"
+                            checked
+                            required
+                        >
+
+                        <label for="online_payment">
+                            Online Payment (UPI)
+                        </label>
+
+                    </div>
+
+
+                    <!-- COD -->
+
+                    <div class="payment-option">
+
+                        <input
+                            type="radio"
+                            id="cod_payment"
+                            name="payment_method"
+                            value="COD"
+                            required
+                        >
+
+                        <label for="cod_payment">
+                            Cash on Delivery (COD)
+                        </label>
+
+                    </div>
+
+
+                    <!-- UPI DETAILS -->
+
+                    <div id="upi_details" class="payment-details">
+
+                        <div class="qr-box">
+
+                            <h3>Scan &amp; Pay</h3>
+
+                            <div id="upi-qr"></div>
+
+                            <div class="upi-amount">
+                                ₹{{ total|floatformat:2 }}
+                            </div>
+
+                            <p class="upi-name">
+                                Mr shekhar shelke
+                            </p>
+
+                            <p class="upi-note">
+                                UPI ID: 7498766908@axl
+                            </p>
+
+                            <p class="upi-note">
+                                Scan this QR code using your UPI app.
+                                The exact order amount will be pre-filled.
+                            </p>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="transaction_id">
+                                UPI Transaction ID / UTR Number
+                            </label>
+
+                            <input
+                                type="text"
+                                id="transaction_id"
+                                name="transaction_id"
+                                placeholder="Enter payment transaction ID"
+                            >
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="payment_screenshot">
+                                Payment Screenshot (Optional)
+                            </label>
+
+                            <input
+                                type="file"
+                                id="payment_screenshot"
+                                name="payment_screenshot"
+                                accept="image/*"
+                            >
+
+                        </div>
+
+                        <p class="upi-note">
+                            Payment will be verified before order confirmation.
+                        </p>
+
+                    </div>
+
+
+                    <!-- COD DETAILS -->
+
+                    <div id="cod_details" style="display:none;">
+
+                        <div class="cod-box">
+
+                            <h3>Cash on Delivery</h3>
+
+                            <p>
+                                You can pay in cash when your order
+                                is delivered to your address.
+                            </p>
+
+                            <p>
+                                Please keep the payment ready
+                                at the time of delivery.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PLACE ORDER -->
+
+                <button
+                    type="submit"
+                    class="place-order-btn"
+                >
+                    Place Order
+                </button>
+
+                <p class="secure-note">
+                    🔒 Your information is securely processed
+                </p>
+
+            </form>
+
+        </div>
+
+
+        <!-- ORDER SUMMARY -->
+
+        <div class="checkout-card">
+
+            <h2>Order Summary</h2>
+
+            {% for item in cart_items %}
+
+            <div class="order-item">
+
+                <div>
+
+                    <div class="order-item-name">
+                        {{ item.product.name }}
+                    </div>
+
+                    <div class="order-item-qty">
+                        Qty: {{ item.quantity }}
+                    </div>
+
+                </div>
+
+                <div class="order-item-price">
+                    ₹{{ item.subtotal }}
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span>₹{{ total }}</span>
+            </div>
+
+            <div class="summary-row">
+                <span>Delivery</span>
+                <span>FREE</span>
+            </div>
+
+            <div class="summary-row summary-total">
+                <span>Total</span>
+                <span>₹{{ total }}</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-checkout">
+
+        <h2>Your cart is empty</h2>
+
+        <p>
+            Add some beautiful home decor products
+            before checkout.
+        </p>
+
+        <a href="{% url 'home' %}">
+            Continue Shopping
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- QR CODE LIBRARY -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
+<!-- DYNAMIC UPI QR SCRIPT -->
+
+<script>
+
+    const onlinePayment = document.getElementById("online_payment");
+    const codPayment = document.getElementById("cod_payment");
+
+    const upiDetails = document.getElementById("upi_details");
+    const codDetails = document.getElementById("cod_details");
+
+    const transactionId = document.getElementById("transaction_id");
+
+    const qrContainer = document.getElementById("upi-qr");
+
+    // Django total converted to a JavaScript numeric value
+    const totalAmount = Number("{{ total|floatformat:2 }}");
+
+    // UPI details
+    const upiId = "7498766908@axl";
+    const payeeName = "Home Decor";
+
+    function generateDynamicUPIQR() {
+
+        if (!qrContainer || !window.QRCode) {
+            if (qrContainer) {
+                qrContainer.innerHTML =
+                    "QR library could not load. Please check internet connection.";
+            }
+            return;
+        }
+
+        qrContainer.innerHTML = "";
+
+        if (!totalAmount || totalAmount <= 0) {
+            qrContainer.innerHTML = "Invalid payment amount.";
+            return;
+        }
+
+        const upiURL =
+            "upi://pay" +
+            "?pa=" + encodeURIComponent(upiId) +
+            "&pn=" + encodeURIComponent(payeeName) +
+            "&am=" + encodeURIComponent(totalAmount.toFixed(2)) +
+            "&cu=INR" +
+            "&tn=" + encodeURIComponent("Home Decor Order Payment");
+
+        new QRCode(qrContainer, {
+            text: upiURL,
+            width: 250,
+            height: 250,
+            colorDark: "#263238",
+            colorLight: "#FFFFFF",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+
+    function updatePaymentMethod() {
+
+        if (!onlinePayment || !codPayment) {
+            return;
+        }
+
+        if (onlinePayment.checked) {
+
+            upiDetails.style.display = "block";
+            codDetails.style.display = "none";
+
+            transactionId.required = true;
+
+        } else {
+
+            upiDetails.style.display = "none";
+            codDetails.style.display = "block";
+
+            transactionId.required = false;
+            transactionId.value = "";
+
+        }
+
+    }
+
+
+    if (onlinePayment && codPayment) {
+
+        onlinePayment.addEventListener(
+            "change",
+            updatePaymentMethod
+        );
+
+        codPayment.addEventListener(
+            "change",
+            updatePaymentMethod
+        );
+
+        updatePaymentMethod();
+
+    }
+
+
+    generateDynamicUPIQR();
+
+</script>
+
+</body>
+</html>

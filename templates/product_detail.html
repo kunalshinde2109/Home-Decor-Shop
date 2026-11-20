@@ -1,0 +1,1124 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ product.name }} | Home Decor</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="nav-container">
+
+        <a href="{% url 'home' %}" class="logo">
+            Home<span>Decor</span>
+        </a>
+
+        <div class="nav-actions">
+
+            <a href="{% url 'cart' %}" class="product-cart-btn">
+                🛒 Cart
+            </a>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'logout' %}" class="product-nav-btn">
+                    Logout
+                </a>
+            {% else %}
+                <a href="{% url 'login' %}" class="product-nav-btn">
+                    Login
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+</header>
+
+
+<main class="product-detail-page">
+
+    <div class="product-detail-container">
+
+        <!-- ================= LEFT : PRODUCT IMAGE ================= -->
+
+        <div class="product-detail-image">
+
+            {% if product.image %}
+
+                <img
+                    src="{{ product.image.url }}"
+                    alt="{{ product.name }}"
+                >
+
+            {% else %}
+
+                <div class="no-product-image">
+                    No Image Available
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- ================= RIGHT : PRODUCT INFORMATION ================= -->
+
+        <div class="product-detail-content">
+
+            {% if product.category %}
+
+                <span class="product-category">
+                    {{ product.category.name }}
+                </span>
+
+            {% endif %}
+
+
+            <h1>
+                {{ product.name }}
+            </h1>
+
+
+            <!-- PRICE -->
+
+            <div class="product-detail-price">
+
+                ₹{{ product.price }}
+
+                {% if product.old_price %}
+
+                    <del>
+                        ₹{{ product.old_price }}
+                    </del>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            {% if product.description %}
+
+                <p class="product-description">
+                    {{ product.description }}
+                </p>
+
+            {% endif %}
+
+
+            <!-- STOCK -->
+
+            {% if product.stock > 0 %}
+
+                <div class="stock-status in-stock">
+
+                    ✓ In Stock
+
+                    <span>
+                        {{ product.stock }} available
+                    </span>
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="quantity-section">
+
+                    <span>
+                        Quantity
+                    </span>
+
+
+                    <div class="quantity-box">
+
+                        <button
+                            type="button"
+                            id="minus"
+                        >
+                            −
+                        </button>
+
+
+                        <span id="quantity">
+                            1
+                        </span>
+
+
+                        <button
+                            type="button"
+                            id="plus"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- MAX STOCK -->
+
+                <input
+                    type="hidden"
+                    id="maxStock"
+                    value="{{ product.stock }}"
+                >
+
+
+                <!-- ADD TO CART -->
+
+                <form
+                    method="POST"
+                    action="{% url 'add_to_cart' product.id %}"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="quantity"
+                        id="quantityInput"
+                        value="1"
+                    >
+
+
+                    <button
+                        type="submit"
+                        class="product-add-btn"
+                    >
+                        Add to Cart
+                    </button>
+
+                </form>
+
+
+            {% else %}
+
+                <div class="stock-status out-stock">
+                    Out of Stock
+                </div>
+
+
+                <button
+                    type="button"
+                    class="product-add-btn disabled-btn"
+                    disabled
+                >
+                    Out of Stock
+                </button>
+
+            {% endif %}
+
+
+            <!-- CONTINUE SHOPPING -->
+
+            <a
+                href="{% url 'home' %}"
+                class="back-shop"
+            >
+                ← Continue Shopping
+            </a>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<!-- ================= 360 IMAGE DATA ================= -->
+
+<script id="360-data" type="application/json">
+[
+{% for frame in view_360_images %}
+    "{{ frame.image.url|escapejs }}"{% if not forloop.last %},{% endif %}
+{% endfor %}
+]
+</script>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+const quantityElement = document.getElementById("quantity");
+const quantityInput = document.getElementById("quantityInput");
+
+const plusButton = document.getElementById("plus");
+const minusButton = document.getElementById("minus");
+
+const maxStockElement = document.getElementById("maxStock");
+
+let count = 1;
+let maxStock = 0;
+
+
+/* ================= STOCK ================= */
+
+if (maxStockElement) {
+    maxStock = parseInt(maxStockElement.value, 10) || 0;
+}
+
+
+/* ================= PLUS ================= */
+
+if (plusButton) {
+
+    plusButton.addEventListener("click", function () {
+
+        if (count < maxStock) {
+
+            count++;
+
+            if (quantityElement) {
+                quantityElement.textContent = count;
+            }
+
+            if (quantityInput) {
+                quantityInput.value = count;
+            }
+
+        }
+
+    });
+
+}
+
+
+/* ================= MINUS ================= */
+
+if (minusButton) {
+
+    minusButton.addEventListener("click", function () {
+
+        if (count > 1) {
+
+            count--;
+
+            if (quantityElement) {
+                quantityElement.textContent = count;
+            }
+
+            if (quantityInput) {
+                quantityInput.value = count;
+            }
+
+        }
+
+    });
+
+}
+
+
+/* ================= REVEAL ================= */
+
+const revealElements =
+    document.querySelectorAll(".reveal-product");
+
+revealElements.forEach(function (element, index) {
+
+    setTimeout(function () {
+
+        element.classList.add("show");
+
+    }, index * 180);
+
+});
+
+
+/* ================= 360 DATA ================= */
+
+const viewerDataElement =
+    document.getElementById("360-data");
+
+let viewerFrames = [];
+
+if (viewerDataElement) {
+
+    try {
+
+        viewerFrames =
+            JSON.parse(
+                viewerDataElement.textContent
+            );
+
+    } catch (error) {
+
+        console.error(
+            "360 image data error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* ================= 360 VIEWER ================= */
+
+const viewer =
+    document.getElementById("viewer360");
+
+const viewerImage =
+    document.getElementById("viewer360Image");
+
+const rotateLeft =
+    document.getElementById("rotateLeft");
+
+const rotateRight =
+    document.getElementById("rotateRight");
+
+const autoRotateButton =
+    document.getElementById("autoRotate");
+
+
+if (
+    viewer &&
+    viewerImage &&
+    viewerFrames.length > 0
+) {
+
+    let currentFrame = 0;
+    let isDragging = false;
+    let lastX = 0;
+
+    let autoRotating = false;
+    let autoTimer = null;
+
+
+    function showFrame(index) {
+
+        const total =
+            viewerFrames.length;
+
+        currentFrame =
+            (index + total) % total;
+
+        viewerImage.src =
+            viewerFrames[currentFrame];
+
+    }
+
+
+    function nextFrame() {
+
+        showFrame(
+            currentFrame + 1
+        );
+
+    }
+
+
+    function previousFrame() {
+
+        showFrame(
+            currentFrame - 1
+        );
+
+    }
+
+
+    /* RIGHT */
+
+    if (rotateRight) {
+
+        rotateRight.addEventListener(
+            "click",
+            function () {
+
+                stopAutoRotate();
+                nextFrame();
+
+            }
+        );
+
+    }
+
+
+    /* LEFT */
+
+    if (rotateLeft) {
+
+        rotateLeft.addEventListener(
+            "click",
+            function () {
+
+                stopAutoRotate();
+                previousFrame();
+
+            }
+        );
+
+    }
+
+
+    /* MOUSE */
+
+    viewer.addEventListener(
+        "mousedown",
+        function (event) {
+
+            isDragging = true;
+            lastX = event.clientX;
+
+            stopAutoRotate();
+
+            viewer.classList.add(
+                "dragging"
+            );
+
+        }
+    );
+
+
+    viewer.addEventListener(
+        "mousemove",
+        function (event) {
+
+            if (!isDragging) {
+                return;
+            }
+
+            const movement =
+                event.clientX - lastX;
+
+            if (Math.abs(movement) >= 8) {
+
+                if (movement > 0) {
+                    previousFrame();
+                } else {
+                    nextFrame();
+                }
+
+                lastX =
+                    event.clientX;
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "mouseup",
+        function () {
+
+            isDragging = false;
+
+            viewer.classList.remove(
+                "dragging"
+            );
+
+        }
+    );
+
+
+    /* TOUCH */
+
+    viewer.addEventListener(
+        "touchstart",
+        function (event) {
+
+            if (
+                event.touches.length !== 1
+            ) {
+                return;
+            }
+
+            isDragging = true;
+
+            lastX =
+                event.touches[0].clientX;
+
+            stopAutoRotate();
+
+            viewer.classList.add(
+                "dragging"
+            );
+
+        },
+        { passive: true }
+    );
+
+
+    viewer.addEventListener(
+        "touchmove",
+        function (event) {
+
+            if (!isDragging) {
+                return;
+            }
+
+            const currentX =
+                event.touches[0].clientX;
+
+            const movement =
+                currentX - lastX;
+
+            if (Math.abs(movement) >= 8) {
+
+                if (movement > 0) {
+                    previousFrame();
+                } else {
+                    nextFrame();
+                }
+
+                lastX = currentX;
+
+            }
+
+        },
+        { passive: true }
+    );
+
+
+    viewer.addEventListener(
+        "touchend",
+        function () {
+
+            isDragging = false;
+
+            viewer.classList.remove(
+                "dragging"
+            );
+
+        }
+    );
+
+
+    /* AUTO ROTATE */
+
+    function startAutoRotate() {
+
+        if (autoRotating) {
+            return;
+        }
+
+        autoRotating = true;
+
+        if (autoRotateButton) {
+
+            autoRotateButton.textContent =
+                "⏸ Stop Rotation";
+
+        }
+
+        autoTimer =
+            setInterval(
+                function () {
+
+                    nextFrame();
+
+                },
+                120
+            );
+
+    }
+
+
+    function stopAutoRotate() {
+
+        autoRotating = false;
+
+        if (autoTimer) {
+
+            clearInterval(autoTimer);
+
+            autoTimer = null;
+
+        }
+
+        if (autoRotateButton) {
+
+            autoRotateButton.textContent =
+                "▶ Auto Rotate";
+
+        }
+
+    }
+
+
+    if (autoRotateButton) {
+
+        autoRotateButton.addEventListener(
+            "click",
+            function () {
+
+                if (autoRotating) {
+                    stopAutoRotate();
+                } else {
+                    startAutoRotate();
+                }
+
+            }
+        );
+
+    }
+
+
+    /* PRELOAD */
+
+    viewerFrames.forEach(
+        function (src) {
+
+            const image =
+                new Image();
+
+            image.src = src;
+
+        }
+    );
+
+}
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       QUANTITY
+    ===================================================== */
+
+    const quantityElement = document.getElementById("quantity");
+    const quantityInput = document.getElementById("quantityInput");
+    const plusButton = document.getElementById("plus");
+    const minusButton = document.getElementById("minus");
+    const maxStockElement = document.getElementById("maxStock");
+
+    let count = 1;
+    let maxStock = 0;
+
+    if (maxStockElement) {
+        maxStock = parseInt(maxStockElement.value) || 0;
+    }
+
+    if (plusButton) {
+
+        plusButton.addEventListener("click", function () {
+
+            if (count < maxStock) {
+
+                count++;
+
+                if (quantityElement) {
+                    quantityElement.textContent = count;
+                }
+
+                if (quantityInput) {
+                    quantityInput.value = count;
+                }
+
+            }
+
+        });
+
+    }
+
+
+    if (minusButton) {
+
+        minusButton.addEventListener("click", function () {
+
+            if (count > 1) {
+
+                count--;
+
+                if (quantityElement) {
+                    quantityElement.textContent = count;
+                }
+
+                if (quantityInput) {
+                    quantityInput.value = count;
+                }
+
+            }
+
+        });
+
+    }
+
+
+    /* =====================================================
+       PRODUCT REVEAL
+    ===================================================== */
+
+    const revealElements =
+        document.querySelectorAll(".reveal-product");
+
+    revealElements.forEach(function (element, index) {
+
+        setTimeout(function () {
+
+            element.classList.add("show");
+
+        }, index * 180);
+
+    });
+
+
+    /* =====================================================
+       360 VIEWER
+    ===================================================== */
+
+    const viewerDataElement =
+        document.getElementById("360-data");
+
+    let viewerFrames = [];
+
+    if (viewerDataElement) {
+
+        try {
+
+            viewerFrames =
+                JSON.parse(
+                    viewerDataElement.textContent
+                );
+
+        } catch (error) {
+
+            console.error(
+                "360 image data error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    const viewer =
+        document.getElementById("viewer360");
+
+    const viewerImage =
+        document.getElementById("viewer360Image");
+
+    const rotateLeft =
+        document.getElementById("rotateLeft");
+
+    const rotateRight =
+        document.getElementById("rotateRight");
+
+    const autoRotateButton =
+        document.getElementById("autoRotate");
+
+
+    if (
+        viewer &&
+        viewerImage &&
+        viewerFrames.length > 0
+    ) {
+
+        let currentFrame = 0;
+        let isDragging = false;
+        let lastX = 0;
+        let autoRotating = false;
+        let autoTimer = null;
+
+
+        function showFrame(index) {
+
+            const total =
+                viewerFrames.length;
+
+            currentFrame =
+                (index + total) % total;
+
+            viewerImage.src =
+                viewerFrames[currentFrame];
+
+        }
+
+
+        function nextFrame() {
+
+            showFrame(
+                currentFrame + 1
+            );
+
+        }
+
+
+        function previousFrame() {
+
+            showFrame(
+                currentFrame - 1
+            );
+
+        }
+
+
+        function stopAutoRotate() {
+
+            autoRotating = false;
+
+            if (autoTimer) {
+
+                clearInterval(autoTimer);
+
+                autoTimer = null;
+
+            }
+
+            if (autoRotateButton) {
+
+                autoRotateButton.textContent =
+                    "▶ Auto Rotate";
+
+            }
+
+        }
+
+
+        function startAutoRotate() {
+
+            if (autoRotating) {
+                return;
+            }
+
+            autoRotating = true;
+
+            if (autoRotateButton) {
+
+                autoRotateButton.textContent =
+                    "⏸ Stop Rotation";
+
+            }
+
+            autoTimer =
+                setInterval(function () {
+
+                    nextFrame();
+
+                }, 120);
+
+        }
+
+
+        if (rotateRight) {
+
+            rotateRight.addEventListener(
+                "click",
+                function () {
+
+                    stopAutoRotate();
+
+                    nextFrame();
+
+                }
+            );
+
+        }
+
+
+        if (rotateLeft) {
+
+            rotateLeft.addEventListener(
+                "click",
+                function () {
+
+                    stopAutoRotate();
+
+                    previousFrame();
+
+                }
+            );
+
+        }
+
+
+        if (autoRotateButton) {
+
+            autoRotateButton.addEventListener(
+                "click",
+                function () {
+
+                    if (autoRotating) {
+
+                        stopAutoRotate();
+
+                    } else {
+
+                        startAutoRotate();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        viewer.addEventListener(
+            "mousedown",
+            function (event) {
+
+                isDragging = true;
+
+                lastX = event.clientX;
+
+                stopAutoRotate();
+
+                viewer.classList.add("dragging");
+
+            }
+        );
+
+
+        viewer.addEventListener(
+            "mousemove",
+            function (event) {
+
+                if (!isDragging) {
+                    return;
+                }
+
+                const movement =
+                    event.clientX - lastX;
+
+                if (Math.abs(movement) >= 8) {
+
+                    if (movement > 0) {
+
+                        previousFrame();
+
+                    } else {
+
+                        nextFrame();
+
+                    }
+
+                    lastX = event.clientX;
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "mouseup",
+            function () {
+
+                isDragging = false;
+
+                viewer.classList.remove(
+                    "dragging"
+                );
+
+            }
+        );
+
+
+        viewer.addEventListener(
+            "touchstart",
+            function (event) {
+
+                if (event.touches.length !== 1) {
+                    return;
+                }
+
+                isDragging = true;
+
+                lastX =
+                    event.touches[0].clientX;
+
+                stopAutoRotate();
+
+                viewer.classList.add("dragging");
+
+            },
+            { passive: true }
+        );
+
+
+        viewer.addEventListener(
+            "touchmove",
+            function (event) {
+
+                if (!isDragging) {
+                    return;
+                }
+
+                const currentX =
+                    event.touches[0].clientX;
+
+                const movement =
+                    currentX - lastX;
+
+                if (Math.abs(movement) >= 8) {
+
+                    if (movement > 0) {
+
+                        previousFrame();
+
+                    } else {
+
+                        nextFrame();
+
+                    }
+
+                    lastX = currentX;
+
+                }
+
+            },
+            { passive: true }
+        );
+
+
+        viewer.addEventListener(
+            "touchend",
+            function () {
+
+                isDragging = false;
+
+                viewer.classList.remove(
+                    "dragging"
+                );
+
+            }
+        );
+
+
+        /* PRELOAD */
+
+        viewerFrames.forEach(
+            function (src) {
+
+                const image =
+                    new Image();
+
+                image.src = src;
+
+            }
+        );
+
+
+        /* FIRST FRAME */
+
+        showFrame(0);
+
+    }
+
+});
+</script>
+
+</body>
+</html>
+</script>
+
+
+</body>
+
+</html>

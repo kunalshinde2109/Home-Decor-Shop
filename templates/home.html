@@ -1,0 +1,1749 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Home Decor</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+</head>
+
+<body>
+
+<!-- =====================================================
+
+     NAVBAR
+
+===================================================== -->
+
+<header class="navbar">
+
+    <div class="nav-container">
+
+        <!-- LOGO -->
+
+        <a href="{% url 'home' %}" class="logo">
+
+            Home<span>Decor</span>
+
+        </a>
+
+        <!-- DESKTOP NAVIGATION -->
+
+        <nav class="nav-links" id="navLinks">
+
+            <a href="{% url 'home' %}">Home</a>
+
+            <a href="#categories">Categories</a>
+
+            <a href="#products">Shop</a>
+
+            <a href="#about">About</a>
+
+            <a href="#contact">Contact</a>
+
+        </nav>
+
+        <!-- RIGHT NAV ACTIONS -->
+
+        <div class="nav-actions">
+
+            <!-- SEARCH -->
+
+            <button
+
+                type="button"
+
+                class="icon-btn"
+
+                id="searchBtn"
+
+                aria-label="Search"
+
+                title="Search"
+
+            >
+
+                🔍
+
+            </button>
+
+            <!-- WISHLIST -->
+
+            <a
+
+                href="{% url 'wishlist' %}"
+
+                class="icon-btn wishlist-nav"
+
+                aria-label="Wishlist"
+
+                title="Wishlist"
+
+            >
+
+                ♡
+
+                {% if user.is_authenticated %}
+
+                    {% with wishlist_count=user.wishlist_items.count %}
+
+                        {% if wishlist_count > 0 %}
+
+                            <span class="wishlist-count" id="wishlistCount">
+
+                                {{ wishlist_count }}
+
+                            </span>
+
+                        {% else %}
+
+                            <span
+
+                                class="wishlist-count"
+
+                                id="wishlistCount"
+
+                                style="display:none;"
+
+                            >
+
+                                0
+
+                            </span>
+
+                        {% endif %}
+
+                    {% endwith %}
+
+                {% else %}
+
+                    <span
+
+                        class="wishlist-count"
+
+                        id="wishlistCount"
+
+                        style="display:none;"
+
+                    >
+
+                        0
+
+                    </span>
+
+                {% endif %}
+
+            </a>
+
+            <!-- CART -->
+
+            <a
+
+                href="{% url 'cart' %}"
+
+                class="icon-btn cart-btn"
+
+                aria-label="Cart"
+
+                title="Cart"
+
+            >
+
+                🛒
+
+                {% if request.session.cart %}
+
+                    <span class="cart-count">
+
+                        {{ request.session.cart|length }}
+
+                    </span>
+
+                {% endif %}
+
+            </a>
+
+            <!-- AUTH -->
+
+            {% if user.is_authenticated %}
+
+                <span class="nav-user">
+
+                    Hi, {{ user.username }}
+
+                </span>
+
+                <a href="{% url 'logout' %}" class="nav-auth logout-btn">
+
+                    Logout
+
+                </a>
+
+            {% else %}
+
+                <a href="{% url 'login' %}" class="nav-auth login-btn">
+
+                    Login
+
+                </a>
+
+                <a href="{% url 'signup' %}" class="nav-auth signup-btn">
+
+                    Sign Up
+
+                </a>
+
+            {% endif %}
+
+            <!-- MOBILE MENU BUTTON -->
+
+            <button
+
+                class="menu-btn"
+
+                id="menuBtn"
+
+                type="button"
+
+                aria-label="Open menu"
+
+                aria-expanded="false"
+
+            >
+
+                <span></span>
+
+                <span></span>
+
+                <span></span>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</header>
+
+<!-- =====================================================
+
+     SEARCH PANEL
+
+===================================================== -->
+
+<div class="search-panel" id="searchPanel">
+
+    <form
+
+        method="GET"
+
+        action="{% url 'home' %}"
+
+        class="search-form"
+
+        id="searchForm"
+
+    >
+
+        <input
+
+            type="text"
+
+            name="q"
+
+            id="searchInput"
+
+            value="{{ search_query|default:'' }}"
+
+            placeholder="Search furniture, decor, mirrors..."
+
+            autocomplete="off"
+
+        >
+
+        {% if selected_category_name %}
+
+            <input
+
+                type="hidden"
+
+                name="category"
+
+                value="{{ selected_category_name }}"
+
+            >
+
+        {% endif %}
+
+        <button type="submit" class="search-submit">
+
+            Search
+
+        </button>
+
+        <button
+
+            type="button"
+
+            id="closeSearch"
+
+            class="search-close"
+
+            aria-label="Close Search"
+
+        >
+
+            ✕
+
+        </button>
+
+    </form>
+
+</div>
+
+<!-- =====================================================
+
+     MOBILE MENU
+
+===================================================== -->
+
+<div class="mobile-menu" id="mobileMenu">
+
+    <button class="close-menu" id="closeMenu" type="button">
+
+        ×
+
+    </button>
+
+    <a href="{% url 'home' %}">Home</a>
+
+    <a href="#categories">Categories</a>
+
+    <a href="#products">Shop</a>
+
+    <a href="#about">About</a>
+
+    <a href="#contact">Contact</a>
+
+    {% if user.is_authenticated %}
+
+        <a href="{% url 'wishlist' %}">Wishlist</a>
+
+        <a href="{% url 'logout' %}">Logout</a>
+
+    {% else %}
+
+        <a href="{% url 'login' %}">Login</a>
+
+        <a href="{% url 'signup' %}">Sign Up</a>
+
+    {% endif %}
+
+</div>
+
+<!-- =====================================================
+
+     MAIN
+
+===================================================== -->
+
+<main>
+
+    <!-- =====================================================
+
+         HERO
+
+    ====================================================== -->
+
+    <section class="hero" id="home">
+
+        <div class="hero-content reveal">
+
+            <span class="eyebrow">
+
+                CURATED FOR YOUR SPACE
+
+            </span>
+
+            <h1>
+
+                Make Your Home
+
+                <span>
+
+                    Feel Like Home.
+
+                </span>
+
+            </h1>
+
+            <p>
+
+                Discover timeless home decor pieces designed
+
+                to bring warmth, character and beauty into
+
+                every corner of your home.
+
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#products" class="primary-btn">
+
+                    Shop Collection
+
+                </a>
+
+                <a href="#categories" class="secondary-btn">
+
+                    Explore Categories
+
+                </a>
+
+            </div>
+
+            <div class="hero-features">
+
+                <div>
+
+                    <strong>500+</strong>
+
+                    <span>Products</span>
+
+                </div>
+
+                <div>
+
+                    <strong>4.8★</strong>
+
+                    <span>Customer Rating</span>
+
+                </div>
+
+                <div>
+
+                    <strong>Secure</strong>
+
+                    <span>Payments</span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="hero-visual reveal">
+
+            <div class="hero-circle"></div>
+
+            <div class="hero-card">
+
+                <img
+
+                    src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=forma&#x74;*&*&#x66;it=cro&#x70;*&*&#x77;=90&#x30;*&*&#x71;=85"
+
+                    alt="Elegant home decor"
+
+                >
+
+            </div>
+
+            <div class="floating-card">
+
+                <span>✦</span>
+
+                <div>
+
+                    <strong>Thoughtfully</strong>
+
+                    <small>Designed spaces</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+
+         CATEGORIES
+
+    ====================================================== -->
+
+    <section
+
+        class="section categories-section"
+
+        id="categories"
+
+    >
+
+        <div class="section-heading reveal">
+
+            <div>
+
+                <span class="eyebrow">EXPLORE</span>
+
+                <h2>Shop By Category</h2>
+
+            </div>
+
+            <p>
+
+                Everything you need to create a warm,
+
+                beautiful and personal space.
+
+            </p>
+
+        </div>
+
+        <div class="category-grid">
+
+            {% for category in categories %}
+
+                <article class="category-card reveal">
+
+                    <div class="category-image">
+
+                        {% if category.image %}
+
+                            <img
+
+                                src="{{ category.image.url }}"
+
+                                alt="{{ category.name }}"
+
+                                loading="lazy"
+
+                            >
+
+                        {% else %}
+
+                            <div class="category-placeholder">
+
+                                {{ category.name }}
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="category-info">
+
+                        <span>
+
+                            {{ forloop.counter|stringformat:"02d" }}
+
+                        </span>
+
+                        <h3>
+
+                            {{ category.name }}
+
+                        </h3>
+
+                        <a href="{% url 'home' %}?category={{ category.name|urlencode }}#products">
+
+                            Explore →
+
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <p>No categories available.</p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+
+         PRODUCTS
+
+    ====================================================== -->
+
+    <section
+
+        class="section products-section"
+
+        id="products"
+
+    >
+
+        <div class="section-heading reveal">
+
+            <div>
+
+                <span class="eyebrow">
+
+                    {% if selected_category_name %}
+
+                        {{ selected_category_name|upper }}
+
+                    {% elif search_query %}
+
+                        SEARCH
+
+                    {% else %}
+
+                        OUR COLLECTION
+
+                    {% endif %}
+
+                </span>
+
+                <h2>
+
+                    {% if selected_category_name and search_query %}
+
+                        {{ selected_category_name }} — Search Results for "{{ search_query }}"
+
+                    {% elif selected_category_name %}
+
+                        {{ selected_category_name }} Products
+
+                    {% elif search_query %}
+
+                        Search Results for "{{ search_query }}"
+
+                    {% else %}
+
+                        Featured Pieces
+
+                    {% endif %}
+
+                </h2>
+
+            </div>
+
+            {% if search_query %}
+
+                {% if selected_category_name %}
+
+                    <a href="{% url 'home' %}?category={{ selected_category_name|urlencode }}#products" class="view-all">
+
+                        Clear Search →
+
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'home' %}#products" class="view-all">
+
+                        Clear Search →
+
+                    </a>
+
+                {% endif %}
+
+            {% elif selected_category_name %}
+
+                <a href="{% url 'home' %}#products" class="view-all">
+
+                    View All Products →
+
+                </a>
+
+            {% else %}
+
+                <a href="#products" class="view-all">
+
+                    View All Products →
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        {% if search_query or selected_category_name %}
+
+            <div class="search-status">
+
+                <p>
+
+                    {% if selected_category_name %}
+
+                        Showing products in:
+
+                        <strong>{{ selected_category_name }}</strong>
+
+                    {% endif %}
+
+                    {% if search_query %}
+
+                        {% if selected_category_name %} matching {% else %} Showing results for {% endif %}
+
+                        <strong>"{{ search_query }}"</strong>
+
+                    {% endif %}
+
+                </p>
+
+            </div>
+
+        {% endif %}
+
+        <!-- PRODUCT GRID -->
+
+        <div class="product-grid">
+
+            {% for product in products %}
+
+                <article
+
+                    class="product-card reveal"
+
+                    id="product-{{ product.id }}"
+
+                >
+
+                    <!-- PRODUCT IMAGE -->
+
+                    <div class="product-image">
+
+                        <!-- BADGE -->
+
+                        {% if product.is_new %}
+
+                            <span class="product-badge">
+
+                                NEW
+
+                            </span>
+
+                        {% elif product.is_sale %}
+
+                            <span class="product-badge sale">
+
+                                SALE
+
+                            </span>
+
+                        {% endif %}
+
+                        <!-- PRODUCT WISHLIST -->
+
+                        <button
+
+                            type="button"
+
+                            class="wishlist {% if user.is_authenticated and product.id in wishlist_product_ids %}liked{% endif %}"
+
+                            data-product-id="{{ product.id }}"
+
+                            data-wishlist-url="{% url 'toggle_wishlist' product.id %}"
+
+                            data-liked="{% if user.is_authenticated and product.id in wishlist_product_ids %}true{% else %}false{% endif %}"
+
+                            aria-label="{% if user.is_authenticated and product.id in wishlist_product_ids %}Remove from Wishlist{% else %}Add {{ product.name }} to wishlist{% endif %}"
+
+                            title="{% if user.is_authenticated and product.id in wishlist_product_ids %}Remove from Wishlist{% else %}Add to Wishlist{% endif %}"
+
+                        >
+
+                            {% if user.is_authenticated and product.id in wishlist_product_ids %}
+
+                                ♥
+
+                            {% else %}
+
+                                ♡
+
+                            {% endif %}
+
+                        </button>
+
+                        <!-- PRODUCT IMAGE -->
+
+                        {% if product.image %}
+
+                            <a href="{% url 'product_detail' product.id %}">
+
+                                <img
+
+                                    src="{{ product.image.url }}"
+
+                                    alt="{{ product.name }}"
+
+                                    loading="lazy"
+
+                                >
+
+                            </a>
+
+                        {% else %}
+
+                            <a
+
+                                href="{% url 'product_detail' product.id %}"
+
+                                class="no-product-image"
+
+                            >
+
+                                No Image
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                    <!-- PRODUCT INFORMATION -->
+
+                    <div class="product-info">
+
+                        <!-- CATEGORY -->
+
+                        <span class="product-category">
+
+                            {% if product.category %}
+
+                                {{ product.category.name }}
+
+                            {% else %}
+
+                                Home Decor
+
+                            {% endif %}
+
+                        </span>
+
+                        <!-- PRODUCT NAME -->
+
+                        <h3 class="product-name">
+
+                            <a href="{% url 'product_detail' product.id %}">
+
+                                {{ product.name }}
+
+                            </a>
+
+                        </h3>
+
+                        <!-- PRICE + CART -->
+
+                        <div class="product-bottom">
+
+                            <strong>
+
+                                ₹{{ product.price }}
+
+                            </strong>
+
+                            {% if product.stock > 0 %}
+
+                                <a
+
+                                    href="{% url 'add_to_cart' product.id %}"
+
+                                    class="add-btn"
+
+                                >
+
+                                    Add +
+
+                                </a>
+
+                            {% else %}
+
+                                <button
+
+                                    class="add-btn disabled-btn"
+
+                                    type="button"
+
+                                    disabled
+
+                                >
+
+                                    Sold Out
+
+                                </button>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <!-- NO PRODUCTS -->
+
+                <div class="no-search-results">
+
+                    <div class="no-results-icon">
+
+                        🔍
+
+                    </div>
+
+                    <h3>No products found</h3>
+
+                    {% if selected_category_name and search_query %}
+
+                        <p>
+
+                            We couldn't find any products in
+
+                            <strong>{{ selected_category_name }}</strong>
+
+                            matching <strong>"{{ search_query }}"</strong>.
+
+                        </p>
+
+                        <a href="{% url 'home' %}?category={{ selected_category_name|urlencode }}#products" class="primary-btn">
+
+                            Clear Search
+
+                        </a>
+
+                    {% elif selected_category_name %}
+
+                        <p>
+
+                            No products are available in
+
+                            <strong>{{ selected_category_name }}</strong>
+
+                            right now.
+
+                        </p>
+
+                        <a href="{% url 'home' %}#products" class="primary-btn">
+
+                            View All Products
+
+                        </a>
+
+                    {% elif search_query %}
+
+                        <p>
+
+                            We couldn't find any products matching
+
+                            <strong>"{{ search_query }}"</strong>
+
+                        </p>
+
+                        <a href="{% url 'home' %}#products" class="primary-btn">
+
+                            View All Products
+
+                        </a>
+
+                    {% else %}
+
+                        <p>
+
+                            No products are available right now.
+
+                        </p>
+
+                        <a href="{% url 'home' %}" class="primary-btn">
+
+                            View All Products
+
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+
+         PROMO
+
+    ====================================================== -->
+
+    <section class="promo-section reveal">
+
+        <div class="promo-content">
+
+            <span class="eyebrow">
+
+                CREATE YOUR SPACE
+
+            </span>
+
+            <h2>
+
+                Small Details.
+
+                <br>
+
+                Big Difference.
+
+            </h2>
+
+            <p>
+
+                Bring warmth and personality into your home
+
+                with pieces chosen to make everyday living beautiful.
+
+            </p>
+
+            <a href="#products" class="primary-btn">
+
+                Discover More
+
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- =====================================================
+
+         ABOUT
+
+    ====================================================== -->
+
+    <section
+
+        class="section about-section"
+
+        id="about"
+
+    >
+
+        <div class="about-image reveal">
+
+            <img
+
+                src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=forma&#x74;*&*&#x66;it=cro&#x70;*&*&#x77;=100&#x30;*&*&#x71;=85"
+
+                alt="Beautiful home interior"
+
+                loading="lazy"
+
+            >
+
+        </div>
+
+        <div class="about-content reveal">
+
+            <span class="eyebrow">
+
+                OUR PHILOSOPHY
+
+            </span>
+
+            <h2>
+
+                Designed For
+
+                <br>
+
+                Everyday Living.
+
+            </h2>
+
+            <p>
+
+                At Home Decor, we believe your home should reflect
+
+                who you are. Our collection combines timeless
+
+                design, warm textures and thoughtful details.
+
+            </p>
+
+            <p>
+
+                From statement pieces to subtle accents,
+
+                every product is selected to help you create
+
+                a space that feels truly yours.
+
+            </p>
+
+            <a href="#products" class="secondary-btn">
+
+                Explore Collection
+
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+<!-- =====================================================
+
+     FOOTER
+
+===================================================== -->
+
+<footer class="footer" id="contact">
+
+    <div class="footer-container">
+
+        <!-- BRAND -->
+
+        <div class="footer-brand">
+
+            <a href="{% url 'home' %}" class="logo">
+
+                Home<span>Decor</span>
+
+            </a>
+
+            <p>
+
+                Beautiful pieces for beautiful spaces.
+
+            </p>
+
+        </div>
+
+        <!-- SHOP -->
+
+        <div class="footer-column">
+
+            <h4>Shop</h4>
+
+            <a href="#products">All Products</a>
+
+            <a href="#categories">Categories</a>
+
+            <a href="#products">New Arrivals</a>
+
+            <a href="#products">Best Sellers</a>
+
+        </div>
+
+        <!-- HELP -->
+
+        <div class="footer-column">
+
+            <h4>Help</h4>
+
+            <a href="#">Shipping</a>
+
+            <a href="#">Returns</a>
+
+            <a href="#">Privacy</a>
+
+            <a href="#">Terms</a>
+
+        </div>
+
+        <!-- CONTACT -->
+
+        <div class="footer-column">
+
+            <h4>Contact</h4>
+
+            <a href="mailto:hello@homedecor.com">
+
+                hello@homedecor.com
+
+            </a>
+
+            <a href="tel:+917498766908">
+
+                +91 74987 66908
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+
+            © 2026 HomeDecor. All rights reserved.
+
+        </p>
+
+    </div>
+
+</footer>
+
+<!-- =====================================================
+
+     JAVASCRIPT
+
+===================================================== -->
+
+<script>
+
+/* =====================================================
+
+   HOME DECOR — HOME PAGE JAVASCRIPT
+
+===================================================== */
+
+/* =====================================================
+
+   SEARCH PANEL OPEN / CLOSE
+
+===================================================== */
+
+const searchBtn = document.getElementById("searchBtn");
+
+const searchPanel = document.getElementById("searchPanel");
+
+const closeSearch = document.getElementById("closeSearch");
+
+const searchInput = document.getElementById("searchInput");
+
+if (searchBtn && searchPanel) {
+
+    searchBtn.addEventListener("click", function () {
+
+        searchPanel.classList.toggle("active");
+
+        if (searchPanel.classList.contains("active") && searchInput) {
+
+            searchInput.focus();
+
+        }
+
+    });
+
+}
+
+if (closeSearch && searchPanel) {
+
+    closeSearch.addEventListener("click", function () {
+
+        searchPanel.classList.remove("active");
+
+    });
+
+}
+
+/* =====================================================
+
+   MOBILE MENU
+
+===================================================== */
+
+const menuBtn = document.getElementById("menuBtn");
+
+const mobileMenu = document.getElementById("mobileMenu");
+
+const closeMenu = document.getElementById("closeMenu");
+
+if (menuBtn && mobileMenu) {
+
+    menuBtn.addEventListener("click", function () {
+
+        mobileMenu.classList.add("active");
+
+        document.body.style.overflow = "hidden";
+
+        menuBtn.setAttribute(
+
+            "aria-expanded",
+
+            "true"
+
+        );
+
+    });
+
+}
+
+if (closeMenu && mobileMenu) {
+
+    closeMenu.addEventListener("click", function () {
+
+        mobileMenu.classList.remove("active");
+
+        document.body.style.overflow = "";
+
+        if (menuBtn) {
+
+            menuBtn.setAttribute(
+
+                "aria-expanded",
+
+                "false"
+
+            );
+
+        }
+
+    });
+
+}
+
+document.querySelectorAll(".mobile-menu a").forEach(
+
+    function (link) {
+
+        link.addEventListener("click", function () {
+
+            if (mobileMenu) {
+
+                mobileMenu.classList.remove("active");
+
+                document.body.style.overflow = "";
+
+            }
+
+            if (menuBtn) {
+
+                menuBtn.setAttribute(
+
+                    "aria-expanded",
+
+                    "false"
+
+                );
+
+            }
+
+        });
+
+    }
+
+);
+
+/* =====================================================
+
+   NAVBAR SCROLL
+
+===================================================== */
+
+const navbar = document.querySelector(".navbar");
+
+if (navbar) {
+
+    window.addEventListener(
+
+        "scroll",
+
+        function () {
+
+            if (window.scrollY > 40) {
+
+                navbar.classList.add("scrolled");
+
+            } else {
+
+                navbar.classList.remove("scrolled");
+
+            }
+
+        },
+
+        { passive: true }
+
+    );
+
+}
+
+/* =====================================================
+
+   SCROLL REVEAL
+
+===================================================== */
+
+const revealElements = document.querySelectorAll(".reveal");
+
+if ("IntersectionObserver" in window) {
+
+    const revealObserver = new IntersectionObserver(
+
+        function (entries, observer) {
+
+            entries.forEach(
+
+                function (entry) {
+
+                    if (entry.isIntersecting) {
+
+                        entry.target.classList.add("visible");
+
+                        observer.unobserve(entry.target);
+
+                    }
+
+                }
+
+            );
+
+        },
+
+        {
+
+            threshold: 0.12,
+
+            rootMargin: "0px 0px -40px 0px"
+
+        }
+
+    );
+
+    revealElements.forEach(
+
+        function (element) {
+
+            revealObserver.observe(element);
+
+        }
+
+    );
+
+} else {
+
+    revealElements.forEach(
+
+        function (element) {
+
+            element.classList.add("visible");
+
+        }
+
+    );
+
+}
+
+/* =====================================================
+
+   WISHLIST FUNCTIONALITY
+
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const wishlistButtons = document.querySelectorAll(".wishlist");
+
+    const wishlistCount = document.getElementById("wishlistCount");
+
+    wishlistButtons.forEach(function (button) {
+
+        button.onclick = async function (event) {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            const url = button.getAttribute("data-wishlist-url");
+
+            if (!url) {
+
+                console.error("Wishlist URL missing");
+
+                return;
+
+            }
+
+            try {
+
+                const response = await fetch(url, {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "X-Requested-With": "XMLHttpRequest",
+
+                        "Accept": "application/json"
+
+                    },
+
+                    credentials: "same-origin"
+
+                });
+
+                const data = await response.json();
+
+                console.log("Wishlist response:", data);
+
+                if (data.login_required) {
+
+                    window.location.href = data.login_url;
+
+                    return;
+
+                }
+
+                if (data.success === true) {
+
+                    if (data.added === true) {
+
+                        button.innerHTML = "♥";
+
+                        button.classList.add("liked");
+
+                    } else {
+
+                        button.innerHTML = "♡";
+
+                        button.classList.remove("liked");
+
+                    }
+
+                    if (wishlistCount) {
+
+                        wishlistCount.innerHTML = data.wishlist_count;
+
+                        if (data.wishlist_count > 0) {
+
+                            wishlistCount.style.display = "inline-flex";
+
+                        } else {
+
+                            wishlistCount.style.display = "none";
+
+                        }
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error("Wishlist Error:", error);
+
+            }
+
+        };
+
+    });
+
+});
+
+/* =====================================================
+
+   SEARCH FORM
+
+===================================================== */
+
+const searchForm = document.getElementById("searchForm");
+
+if (searchForm && searchInput) {
+
+    searchForm.addEventListener(
+
+        "submit",
+
+        function () {
+
+            const query = searchInput.value.trim();
+
+            if (query) {
+
+                sessionStorage.setItem(
+
+                    "homeDecorSearch",
+
+                    query
+
+                );
+
+            }
+
+        }
+
+    );
+
+}
+
+/* =====================================================
+
+   SEARCH RESULT SCROLL + HIGHLIGHT
+
+===================================================== */
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    function () {
+
+        const search = sessionStorage.getItem("homeDecorSearch");
+
+        if (!search) {
+
+            return;
+
+        }
+
+        const products = document.querySelectorAll(".product-card");
+
+        const searchText = search.toLowerCase();
+
+        let foundProduct = null;
+
+        products.forEach(
+
+            function (product) {
+
+                if (foundProduct) {
+
+                    return;
+
+                }
+
+                const text = product.innerText.toLowerCase();
+
+                if (text.includes(searchText)) {
+
+                    foundProduct = product;
+
+                }
+
+            }
+
+        );
+
+        if (foundProduct) {
+
+            setTimeout(
+
+                function () {
+
+                    foundProduct.scrollIntoView({
+
+                        behavior: "smooth",
+
+                        block: "center"
+
+                    });
+
+                    foundProduct.classList.add("search-highlight");
+
+                    setTimeout(
+
+                        function () {
+
+                            foundProduct.classList.remove("search-highlight");
+
+                        },
+
+                        3000
+
+                    );
+
+                },
+
+                400
+
+            );
+
+        }
+
+        sessionStorage.removeItem("homeDecorSearch");
+
+    }
+
+);
+
+/* =====================================================
+
+   IMAGE LOAD EFFECT
+
+===================================================== */
+
+document.querySelectorAll("img").forEach(
+
+    function (image) {
+
+        image.addEventListener(
+
+            "load",
+
+            function () {
+
+                image.classList.add("loaded");
+
+            }
+
+        );
+
+    }
+
+);
+
+/* =====================================================
+
+   ESC KEY
+
+===================================================== */
+
+document.addEventListener(
+
+    "keydown",
+
+    function (event) {
+
+        if (event.key === "Escape") {
+
+            if (mobileMenu) {
+
+                mobileMenu.classList.remove("active");
+
+                document.body.style.overflow = "";
+
+            }
+
+            if (menuBtn) {
+
+                menuBtn.setAttribute(
+
+                    "aria-expanded",
+
+                    "false"
+
+                );
+
+            }
+
+            if (searchPanel) {
+
+                searchPanel.classList.remove("active");
+
+            }
+
+        }
+
+    }
+
+);
+
+</script>
+
+</body>
+
+</html>    

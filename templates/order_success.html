@@ -1,0 +1,442 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Order Successful | Home Decor</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f8f6f2;
+            color: #333;
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 40px auto;
+        }
+
+        .success-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.06);
+        }
+
+        .success-icon {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: #e8f5e9;
+            color: #388e3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 42px;
+            margin: 0 auto 25px;
+        }
+
+        .heading {
+            text-align: center;
+        }
+
+        .heading h1 {
+            font-size: 30px;
+            margin-bottom: 12px;
+            color: #333;
+        }
+
+        .heading p {
+            color: #777;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .order-number {
+            margin-top: 25px;
+            padding: 18px;
+            background: #f8f5f0;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .order-number small {
+            color: #777;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .order-number h2 {
+            color: #8b6f47;
+            font-size: 24px;
+        }
+
+        .section-title {
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-size: 19px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 12px;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .detail-box {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .detail-box small {
+            color: #888;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .detail-box strong {
+            font-size: 15px;
+            color: #333;
+            word-break: break-word;
+        }
+
+        .total-box {
+            margin-top: 25px;
+            padding: 22px;
+            background: #f8f5f0;
+            border-radius: 12px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+
+        .total-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .total-amount {
+            font-size: 22px;
+            font-weight: bold;
+            color: #8b6f47;
+        }
+
+        .payment-note {
+            margin-top: 25px;
+            padding: 16px;
+            background: #fff8e7;
+            border: 1px solid #f0dfb5;
+            border-radius: 10px;
+            color: #775d2e;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+            min-width: 180px;
+        }
+
+        .home-btn {
+            background: #8b6f47;
+            color: white;
+        }
+
+        .home-btn:hover {
+            background: #705735;
+        }
+
+        .shop-btn {
+            border: 1px solid #8b6f47;
+            color: #8b6f47;
+            background: white;
+        }
+
+        .shop-btn:hover {
+            background: #f8f5f0;
+        }
+
+        .receipt-btn {
+            background: #8b6f47;
+            color: white;
+            border: 1px solid #8b6f47;
+        }
+
+        .receipt-btn:hover {
+            background: #705735;
+        }
+
+        @media(max-width: 600px) {
+
+            .success-card {
+                padding: 25px 18px;
+            }
+
+            .heading h1 {
+                font-size: 25px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .container {
+                margin: 10px auto;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <div class="heading">
+
+            <h1>Order Placed Successfully!</h1>
+
+            <p>
+                Thank you for shopping with us.
+                Your order has been received successfully.
+            </p>
+
+        </div>
+
+
+        <div class="order-number">
+
+            <small>YOUR ORDER NUMBER</small>
+
+            <h2>#{{ order.id }}</h2>
+
+        </div>
+
+
+        <h3 class="section-title">
+            Order Details
+        </h3>
+
+
+        <div class="details">
+
+            <div class="detail-box">
+
+                <small>Customer Name</small>
+
+                <strong>
+                    {{ order.customer_name }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Order Status</small>
+
+                <strong>
+                    {{ order.status }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Payment Method</small>
+
+                <strong>
+                    {{ order.get_payment_method_display }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Payment Status</small>
+
+                <strong>
+                    {{ order.payment_status }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Email</small>
+
+                <strong>
+                    {{ order.email }}
+                </strong>
+
+            </div>
+
+
+            <div class="detail-box">
+
+                <small>Mobile Number</small>
+
+                <strong>
+                    {{ order.phone }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <h3 class="section-title">
+            Delivery Address
+        </h3>
+
+
+        <div class="detail-box">
+
+            <strong>
+
+                {{ order.address }}<br><br>
+
+                {{ order.city }},
+                {{ order.state }}<br><br>
+
+                PIN: {{ order.pincode }}
+
+            </strong>
+
+        </div>
+
+
+        <div class="total-box">
+
+            <div class="total-row">
+
+                <span>Order Total</span>
+
+                <strong class="total-amount">
+                    ₹{{ order.total_amount }}
+                </strong>
+
+            </div>
+
+
+            <div class="total-row">
+
+                <span>Payment Method</span>
+
+                <strong>
+                    {{ order.get_payment_method_display }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        {% if order.payment_method == "UPI" %}
+
+            <div class="payment-note">
+
+                <strong>Online Payment Selected</strong><br><br>
+
+                Your UPI transaction details have been submitted.
+                Payment will be confirmed after verification.
+
+            </div>
+
+        {% else %}
+
+            <div class="payment-note">
+
+                <strong>Cash on Delivery</strong><br><br>
+
+                Please pay ₹{{ order.total_amount }}
+                when your order is delivered.
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- ACTION BUTTONS -->
+
+        <div class="buttons">
+
+            <a href="{% url 'download_order_receipt' order.id %}"
+               class="btn receipt-btn">
+
+                Download Order Receipt
+
+            </a>
+
+            <a href="{% url 'home' %}" class="btn home-btn">
+
+                Continue Shopping
+
+            </a>
+
+            <a href="{% url 'home' %}" class="btn shop-btn">
+
+                Back to Home
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
